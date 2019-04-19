@@ -57,8 +57,34 @@ public:
 		return selected;
 	}
 
-	void endofgame(RenderWindow &win)
+	void beatGame(RenderWindow &win, int numKills)
 	{
+		Font font;
+		if (!font.loadFromFile("C:\\Windows\\Fonts\\georgia.ttf"))
+			die("couldn't load font");
 
+		Text endmessage("You won!", font, 25);
+		endmessage.setPosition(300, 400);
+		win.draw(endmessage);
+
+		Text numOfKillsDisplay(to_string(numKills), font, 25);
+		numOfKillsDisplay.setPosition(250, 200);
+		win.draw(numOfKillsDisplay);
+
+		Text aliensKilled(" aliens were killed! ", font, 25);
+		aliensKilled.setPosition(300, 200);
+		win.draw(aliensKilled);
+
+	}
+
+	void lostGame(RenderWindow &win)
+	{
+		Font font;
+		if (!font.loadFromFile("C:\\Windows\\Fonts\\georgia.ttf"))
+			die("could not load font");
+
+		Text loser("You lost :(", font, 25);
+		loser.setPosition(300, 300);
+		win.draw(loser);
 	}
 };

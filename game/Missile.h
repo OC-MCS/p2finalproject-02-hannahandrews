@@ -11,19 +11,15 @@ private:
 	Sprite missileshot;
 	Vector2f position;
 public:
-	Missile(Vector2f &pos)
+	Missile(Vector2f &pos, Texture &text)
 	{
-		Texture missileTexture;
-		if (!missileTexture.loadFromFile("missile.png"))
-		{
-		cout << "Unable to load ship texture!" << endl;
-		exit(EXIT_FAILURE);
-		}
+
+		missileshot.setTexture(text);
 
 		position = pos;
 
-		missileshot.setTexture(missileTexture);
 		missileshot.setPosition(position);
+
 	}
 
 

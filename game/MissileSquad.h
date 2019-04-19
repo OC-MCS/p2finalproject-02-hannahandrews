@@ -9,15 +9,24 @@
 //when it collides with an alien
 class MissileSquad
 {
+private:
+	Texture missileTexture;
 public:
 	list<Missile> bullets;
 
 	MissileSquad() 
-	{}
+	{
+		if (!missileTexture.loadFromFile("missile.png"))
+		{
+			cout << "Unable to load ship texture!" << endl;
+			exit(EXIT_FAILURE);
+		}
+
+	}
 
 	void addToList(Vector2f &ShipPosition)
 	{
-		Missile temp(ShipPosition);
+		Missile temp(ShipPosition, missileTexture);
 
 		bullets.push_back(temp);
 	}

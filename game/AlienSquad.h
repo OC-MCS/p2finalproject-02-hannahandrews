@@ -11,19 +11,19 @@ using namespace sf;
 class AlienSquad
 {
 private:
-	Texture alienTexture;
 	Vector2f position;
+	Texture alienTexture;
+
 public:
-	int numAliensHit =0;
 	list<Alien> alienList;		//this is the list that contains the set of 10 aliens
 
 	////////////////////////////////////////////////////
 	//Constructer: This is a constructer that creates 
 	//	the initial 10 aliens that appear on the screen
 	/////////////////////////////////////////////////////
-	AlienSquad(RenderWindow &win, int levelnumber)
+	AlienSquad(const int levelnum)
 	{
-		if (levelnumber == 1)
+		if (levelnum == 1)
 		{
 			if (!alienTexture.loadFromFile("alien1.png"))
 			{
@@ -31,7 +31,8 @@ public:
 				exit(EXIT_FAILURE);
 			}
 		}
-		else if (levelnumber == 2)
+
+		else if (levelnum == 2)
 		{
 			if (!alienTexture.loadFromFile("alien2.png"))
 			{
@@ -41,16 +42,41 @@ public:
 		}
 
 
-		for (int i=0; i < 10; i++)
-		{
-			position.x = i * 75;
-			position.y = 20;
+			for (int i = 0; i < 10; i++)
+			{
+				position.x = i * 75;
+				position.y = 20;
 
-			Alien alienHolder(alienTexture, position);
-		
-			alienList.push_back(alienHolder);
-		}
+				Alien alienHolder(alienTexture, position);
+
+				alienList.push_back(alienHolder);
+			}
+
+	
 	}
+
+	//////////////////////////////////////////////////////
+	//resetFunc: This sets the aliens back to the initial 
+	//			conditions
+	///////////////////////////////////////////////////////
+	void resetFunc(int level)
+	{
+		for (unsigned i = 0; i < alienList.size(); )
+		{
+			alienList.erase(alienList.begin());
+		}
+
+		AlienSquad replacement(level);
+		list<Alien>::iterator newIter = replacement.alienList.begin();
+
+		while( newIter != replacement.alienList.end())
+		{
+			alienList.push_back(*newIter);
+			newIter++;
+		}
+		
+	}
+
 	////////////////////////////////////////////////////////////
 	//draw: This is the function that calls the alien.h function
 	//		that draws the aliens
@@ -63,6 +89,7 @@ public:
 			it->draw(win);
 		}
 	}
+
 	///////////////////////////////////////////////////////
 	//move: This function is what calls the alien.h function
 	//		that moves the aliens down the screen		
@@ -81,7 +108,7 @@ public:
 	//		missile has colided with an alien
 	//currently working if you dont rapid fire
 	////////////////////////////////////////////////////////
-	void AlienHitByMissile(list<Missile> &missiles)
+	bool AlienHitByMissile(list<Missile> &missiles)
 	{
 		bool alienHit = false;
 		list<Alien>::iterator alienIter = alienList.begin();
@@ -98,7 +125,6 @@ public:
 				{
 					alienList.erase(alienIter);
 					missiles.erase(missileIter);
-					numAliensHit++;
 					alienHit = true;
 				}
 				else missileIter++;
@@ -108,8 +134,14 @@ public:
 				alienIter++;
 			}
 		}
+
+		return alienHit;
 	}
 
+	/////////////////////////////////////////////////
+	//getRandomAlienLocation: This function gets location
+	//			of a random alien to drop a bomb
+	/////////////////////////////////////////////////
 	Vector2f getRandomAlienLocation()
 	{
 		Vector2f location;
@@ -133,4 +165,5 @@ public:
 
 		return location;
 	}
+
 };

@@ -5,25 +5,36 @@
 class Alien
 {
 private:
-	Sprite alien;
-	Vector2f location;
+	Texture alienTexture;
+	Sprite alien;			//this is my sprite value for the alien class
+	Vector2f location;		//this is the location of the sprite
 public:	
 	
+	//constructer
 	Alien(Texture &texture, Vector2f &loc)
 	{
-		alien.setTexture(texture);
+		alienTexture = texture;
+		alien.setTexture(alienTexture);
 		location = loc;
 		alien.setPosition(loc);
 	}
 
+	//default constructer
 	Alien()
 	{}
 
+	/////////////////////////////////////////////
+	//draw: This function draws the alien
+	/////////////////////////////////////////////
 	void draw(RenderWindow &win)
 	{
+		alien.setTexture(alienTexture);
 		win.draw(alien);
 	}
 
+	/////////////////////////////////////////////
+	//move: This function moves the alien
+	/////////////////////////////////////////////
 	void move(RenderWindow &win, int levelnumber)
 	{
 		const float dist = .15 * levelnumber;
@@ -33,8 +44,10 @@ public:
 		location = alien.getPosition();
 	}
 
-
-
+	//////////////////////////////////////////////
+	//testAlienHit: this code tests if the alien comes
+	//		in contact with the missile
+	//////////////////////////////////////////////
 	bool testAlienHit(Vector2f missileLoc)
 	{
 		bool contains = false;
@@ -47,6 +60,28 @@ public:
 		return contains;
 	}
 
+	//////////////////////////////////////////
+	//testContansShip: This code tests to see
+	//		if the alien has collided with the 
+	//		ship
+	//////////////////////////////////////////
+	bool testContainsShip(Vector2f shipLoc)
+	{
+		bool containsShip = false;
+
+		if (alien.getPosition().y >= shipLoc.y)
+		{
+			containsShip = true;
+		}
+
+		return containsShip;
+	}
+
+	/////////////////////////////////////////
+	//alienLocation: This makes the alien
+	//		position avilable to other 
+	//		classes while keeping it safe
+	/////////////////////////////////////////
 	Vector2f alienLocation()
 	{
 		return location;

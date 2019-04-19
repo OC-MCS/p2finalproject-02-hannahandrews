@@ -9,21 +9,15 @@ using namespace sf;
 class singleLife
 {
 private:
-	Texture heartTexture;
 	Sprite heart;
 	Vector2f position;
 public:
-	singleLife( Vector2f pos)
+	singleLife( Vector2f pos, Texture &text)
 	{
-		if(!heartTexture.loadFromFile("Heart.png"))
-		{
-			cout << "Unable to load ship texture!" << endl;
-			exit(EXIT_FAILURE);
-		}
-		else
+
 		position = pos;
 
-		heart.setTexture(heartTexture);
+		heart.setTexture(text);
 		heart.setPosition(position);
 	}
 

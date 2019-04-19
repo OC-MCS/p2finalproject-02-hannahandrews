@@ -41,7 +41,6 @@ void moveShip(Sprite& ship)
 }
 
 
-
 int main()
 {
 	const int WINDOW_WIDTH = 800;
@@ -88,13 +87,17 @@ int main()
 	shipPosition.x = shipX;
 	shipPosition.y = shipY;
 
-	totalLives lives(window);
-	Level level(1);	
-	AlienSquad alien1(window, level.number);
-	AlienSquad *displayedAliens = &alien1;
-	MissileSquad missiles;
-	BombSquad bombsDropped;
-	int frameCount = 0;
+	//These are my variables 
+	totalLives lives(window, 3);				//lives is the lives the user has remaining, initialized at 3
+	Level level(1);								//level is the level the user is playing, initialized at 1
+	AlienSquad displayedAliens(level.number);	//displayedAliens is the set of aliens currently being displayed
+	MissileSquad missiles;						//missiles is the missiles being shot fom the ship
+	BombSquad bombsDropped;						//bombsDropped are the bombs being dropped by the aliens
+
+	int frameCount = 0;							//framCount counts the frams that have occurred to determine how
+												//often to drop bombs
+
+	int aliensKilled = 0;						//aliensKilled keeps track of how many aliens the user has killed
 
 	bool startClicked = false;
 
@@ -109,16 +112,14 @@ int main()
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 				window.close();
-			else if(event.type == Event::MouseButtonReleased)
+			else if(event.type == Event::MouseButtonReleased)		//this section of code test if the start button is selected
 			{
-				// maybe they just clicked on one of the settings "buttons"
-				// check for this and handle it.
 				Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
 				startClicked=level.startSelected(mousePos);
 			}
 			else if (event.type == Event::KeyPressed)
 			{
-				if (event.key.code == Keyboard::Space)
+				if (event.key.code == Keyboard::Space)				//this section of code tests for is the space bar is pressed
 				{
 					Vector2f shotfrom;
 					shotfrom = ship.getPosition();
@@ -128,32 +129,63 @@ int main()
 		
 		}
 
-		if (displayedAliens->alienList.empty() == true)
+		//this code is ran if the user selects to start the game
+		if (startClicked == true)
+		{
+			if (displayedAliens.alienList.empty() == true)
+			{
+				lives.livesRemaining = 3;
+				level.number = level.number + 1;
+				if (level.number == 1 || level.number == 2)
+				{
+					displayedAliens.resetFunc(level.number);
+				}
+			}
+			else
+			{
+				if (level.number != 0 && frameCount % 60 == 0)
+				{
+					Vector2f pos = displayedAliens.getRandomAlienLocation();
+					bombsDropped.dropBomb(pos);
+				}
+
+				if (lives.alienHitShip( displayedAliens, ship.getPosition()) == true)
+				{
+					displayedAliens.resetFunc(level.number);
+					BombSquad bombReset;
+					bombsDropped = bombReset;
+
+				}
+				else if (bombsDropped.bomblist.empty() == false)
+				{
+					if (lives.bombHitShip(bombsDropped, ship.getPosition()) == true)
+					{
+						displayedAliens.resetFunc(level.number);
+						BombSquad bombReset;
+						bombsDropped = bombReset;
+					}
+				}
+
+
+			}
+		}
+		
+		//this segment is ran if the user passes level 1
+		if (level.number == 1 && displayedAliens.alienList.empty() == true)
 		{
 			lives.livesRemaining = 3;
 			level.number = level.number + 1;
-			if (level.number == 1 || level.number == 2)
-			{
-				displayedAliens = new AlienSquad(window, level.number);
-			}
-			else if (level.number == 2)
-			{
-				level.endofgame(window);
-			}
-		}
-
-		if (level.number != 0 && frameCount % 6000 == 0)
-		{
-			Vector2f pos = displayedAliens->getRandomAlienLocation();
-			bombsDropped.dropBomb(pos);
+			displayedAliens.resetFunc(level.number);
 		}
 
 		//This tests to see if any missile shot is hitting any alien
 		if (!missiles.bullets.empty())
 		{
-			displayedAliens->AlienHitByMissile(missiles.bullets);
+			if (displayedAliens.AlienHitByMissile(missiles.bullets) == true)
+			{
+				aliensKilled++;
+			}
 		}
-
 
 		//===========================================================
 		// Everything from here to the end of the loop is where you put your
@@ -165,30 +197,48 @@ int main()
 		// will appear on top of background
 		window.draw(background);
 		 
-		if (startClicked == false)
+		//this is displayed if the user lost the game
+		if (lives.livesRemaining != 0)
 		{
-			level.drawstartScreen(window);
-		}
-		else
-		{
-			bombsDropped.displayBombs(window);
-			lives.drawLives(window);
-			moveShip(ship);
-			// draw the ship on top of background 
-			// (the ship from previous frame was erased when we drew background)
-			window.draw(ship);
-			displayedAliens->draw(window);
-			missiles.draw(window);
+			if (startClicked == false)
+			{
+				level.drawstartScreen(window);
+			}
+			else
+			{	//this code is animating the game
+				if (displayedAliens.alienList.empty() == false)
+				{
+					bombsDropped.displayBombs(window);
+					lives.drawLives(window);
+					moveShip(ship);
+					// draw the ship on top of background 
+					// (the ship from previous frame was erased when we drew background)
+					window.draw(ship);
+					displayedAliens.draw(window);
+					missiles.draw(window);
 
-			bombsDropped.moveBomb(level.number);
-			displayedAliens->move(window, level.number);
-			missiles.move(window);
+					bombsDropped.moveBomb(level.number);
+					displayedAliens.move(window, level.number);
+					missiles.move(window);
+				}
+				else
+				{
+					{
+						level.beatGame(window, aliensKilled);
+					}
+				}
+			}
 		}
+		else 
+		{
+			level.lostGame(window);
+		}
+
+		frameCount++;
 
 		// end the current frame; this makes everything that we have 
 		// already "drawn" actually show up on the screen
 		window.display();
-
 
 		// At this point the frame we have built is now visible on screen.
 		// Now control will go back to the top of the animation loop
