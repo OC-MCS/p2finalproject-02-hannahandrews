@@ -136,6 +136,10 @@ int main()
 			{
 				displayedAliens = new AlienSquad(window, level.number);
 			}
+			else if (level.number == 2)
+			{
+				level.endofgame(window);
+			}
 		}
 
 		if (level.number != 0 && frameCount % 6000 == 0)
@@ -160,7 +164,7 @@ int main()
 		// draw background first, so everything that's drawn later 
 		// will appear on top of background
 		window.draw(background);
-
+		 
 		if (startClicked == false)
 		{
 			level.drawstartScreen(window);
@@ -180,6 +184,7 @@ int main()
 			displayedAliens->move(window, level.number);
 			missiles.move(window);
 		}
+
 		// end the current frame; this makes everything that we have 
 		// already "drawn" actually show up on the screen
 		window.display();

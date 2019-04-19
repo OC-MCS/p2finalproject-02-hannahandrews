@@ -31,7 +31,7 @@ public:
 
 	void moveBomb(const int move)
 	{
-		const int distance = move * 20;
+		const int distance = move * 5;
 		bomb.move(0, distance);
 	}
 

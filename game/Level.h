@@ -56,4 +56,9 @@ public:
 		
 		return selected;
 	}
+
+	void endofgame(RenderWindow &win)
+	{
+
+	}
 };
