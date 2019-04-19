@@ -20,8 +20,49 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Readme.txt">
+    <Image Include="..\..\..\labs-spring\Lab05_Tasks\game\missile.png">
       <Filter>Source Files</Filter>
-    </Text>
+    </Image>
+    <Image Include="alien1.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="alien2.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="Heart.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="bomb.png">
+      <Filter>Source Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Alien.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlienSquad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Missile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MissileSquad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TotalLives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleLife.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BombSquad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

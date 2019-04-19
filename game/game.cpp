@@ -8,9 +8,14 @@
 using namespace std;
 #include <SFML/Graphics.hpp>
 using namespace sf; 
+#include "MissileSquad.h"
+#include "AlienSquad.h"
+#include "Level.h"
+#include "TotalLives.h"
+#include "BombSquad.h"
 
 //============================================================
-// YOUR HEADER WITH YOUR NAME GOES HERE. PLEASE DO NOT FORGET THIS
+// Hannah Andrews
 //============================================================
 
 // note: a Sprite represents an image on screen. A sprite knows and remembers its own position
@@ -75,31 +80,76 @@ int main()
 
 
 	// initial position of the ship will be approx middle of screen
-	float shipX = window.getSize().x / 2.0f;
-	float shipY = window.getSize().y / 2.0f;
+	float shipX = window.getSize().x /2.0f;
+	float shipY = 7*(window.getSize().y) / 8.0f;
 	ship.setPosition(shipX, shipY);
 
+	Vector2f shipPosition;
+	shipPosition.x = shipX;
+	shipPosition.y = shipY;
+
+	totalLives lives(window);
+	Level level(1);	
+	AlienSquad alien1(window, level.number);
+	AlienSquad *displayedAliens = &alien1;
+	MissileSquad missiles;
+	BombSquad bombsDropped;
+	int frameCount = 0;
+
+	bool startClicked = false;
 
 	while (window.isOpen())
 	{
+
 		// check all the window's events that were triggered since the last iteration of the loop
 		// For now, we just need this so we can click on the window and close it
 		Event event;
-
 		while (window.pollEvent(event))
 		{
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 				window.close();
+			else if(event.type == Event::MouseButtonReleased)
+			{
+				// maybe they just clicked on one of the settings "buttons"
+				// check for this and handle it.
+				Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+				startClicked=level.startSelected(mousePos);
+			}
 			else if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Space)
 				{
-					// handle space bar
+					Vector2f shotfrom;
+					shotfrom = ship.getPosition();
+					missiles.addToList(shotfrom);
 				}
-				
+			}
+		
+		}
+
+		if (displayedAliens->alienList.empty() == true)
+		{
+			lives.livesRemaining = 3;
+			level.number = level.number + 1;
+			if (level.number == 1 || level.number == 2)
+			{
+				displayedAliens = new AlienSquad(window, level.number);
 			}
 		}
+
+		if (level.number != 0 && frameCount % 6000 == 0)
+		{
+			Vector2f pos = displayedAliens->getRandomAlienLocation();
+			bombsDropped.dropBomb(pos);
+		}
+
+		//This tests to see if any missile shot is hitting any alien
+		if (!missiles.bullets.empty())
+		{
+			displayedAliens->AlienHitByMissile(missiles.bullets);
+		}
+
 
 		//===========================================================
 		// Everything from here to the end of the loop is where you put your
@@ -111,16 +161,29 @@ int main()
 		// will appear on top of background
 		window.draw(background);
 
-		moveShip(ship);
+		if (startClicked == false)
+		{
+			level.drawstartScreen(window);
+		}
+		else
+		{
+			bombsDropped.displayBombs(window);
+			lives.drawLives(window);
+			moveShip(ship);
+			// draw the ship on top of background 
+			// (the ship from previous frame was erased when we drew background)
+			window.draw(ship);
+			displayedAliens->draw(window);
+			missiles.draw(window);
 
-		// draw the ship on top of background 
-		// (the ship from previous frame was erased when we drew background)
-		window.draw(ship);
-
-
+			bombsDropped.moveBomb(level.number);
+			displayedAliens->move(window, level.number);
+			missiles.move(window);
+		}
 		// end the current frame; this makes everything that we have 
 		// already "drawn" actually show up on the screen
 		window.display();
+
 
 		// At this point the frame we have built is now visible on screen.
 		// Now control will go back to the top of the animation loop

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -149,7 +149,22 @@
     <ClCompile Include="game.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Readme.txt" />
+    <Image Include="..\..\..\labs-spring\Lab05_Tasks\game\missile.png" />
+    <Image Include="alien1.png" />
+    <Image Include="alien2.png" />
+    <Image Include="bomb.png" />
+    <Image Include="Heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Alien.h" />
+    <ClInclude Include="AlienSquad.h" />
+    <ClInclude Include="Bomb.h" />
+    <ClInclude Include="BombSquad.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="SingleLife.h" />
+    <ClInclude Include="Missile.h" />
+    <ClInclude Include="MissileSquad.h" />
+    <ClInclude Include="TotalLives.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
